@@ -1,0 +1,14 @@
+# 原圖不進版控 —— 手機拍的一張就好幾 MB，上網站的是 photos/web/ 裡縮過的版本。
+# 原圖請自己留備份。
+photos/*.jpg
+photos/*.jpeg
+photos/*.JPG
+photos/*.JPEG
+photos/*.png
+photos/*.PNG
+photos/*.heic
+photos/*.HEIC
+!photos/web/
+
+.DS_Store
+__pycache__/

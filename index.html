@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="zh-Hant">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>鉤織作品</title>
+<meta name="description" content="手作鉤織作品集">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f7f4ef; --card:#fffdfa; --line:#e2dbd0; --line-2:#cfc5b6;
+  --ink:#2e2824; --ink-2:#6d6358; --ink-3:#938779;
+  --accent:#9d5b48;            /* 像紅陶、也像一捲棉線 */
+  --serif:"Noto Serif TC",ui-serif,Georgia,"Songti TC",serif;
+  --sans:system-ui,-apple-system,"PingFang TC","Noto Sans TC",sans-serif;
+}
+@media (prefers-color-scheme:dark){:root{
+  --paper:#1a1715; --card:#221e1b; --line:#332d28; --line-2:#463e37;
+  --ink:#ece5dc; --ink-2:#b3a79a; --ink-3:#8a7e72; --accent:#d08a72;
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+  font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1060px;margin:0 auto;padding:0 16px}
+
+header{padding:72px 0 40px;text-align:center}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(28px,5vw,40px);
+  margin:0 0 10px;letter-spacing:.06em}
+header p{color:var(--ink-2);margin:0;font-size:14.5px}
+.rule{width:44px;height:1px;background:var(--line-2);margin:26px auto 0}
+
+/* 作品牆：用 columns 做不等高排版，圖片比例不會被裁掉 */
+.gallery{columns:3 280px;column-gap:18px;padding-bottom:72px}
+figure{break-inside:avoid;margin:0 0 18px;background:var(--card);
+  border:1px solid var(--line);border-radius:3px;overflow:hidden;
+  cursor:zoom-in;transition:border-color .18s,transform .18s}
+figure:hover{border-color:var(--line-2);transform:translateY(-2px)}
+figure img{display:block;width:100%;height:auto}
+figcaption{padding:13px 15px 15px}
+.t{font-family:var(--serif);font-size:16px;font-weight:600;margin:0 0 3px}
+.m{color:var(--ink-3);font-size:12.5px;letter-spacing:.03em}
+
+.empty{border:1px dashed var(--line-2);border-radius:4px;padding:40px 28px;
+  color:var(--ink-2);line-height:1.9}
+.empty b{color:var(--ink);font-weight:600}
+.empty code{background:var(--card);border:1px solid var(--line);border-radius:3px;
+  padding:1px 6px;font-size:13px}
+
+/* 點開的大圖 */
+dialog{border:0;padding:0;background:transparent;max-width:min(960px,94vw);width:100%}
+dialog::backdrop{background:rgba(26,23,21,.82)}
+.sheet{background:var(--card);border-radius:4px;overflow:hidden;
+  display:grid;grid-template-columns:1.45fr 1fr}
+.shots{background:var(--paper);display:flex;flex-direction:column}
+.shots img{width:100%;height:auto;display:block}
+.info{padding:30px 28px 28px;min-width:0}
+.info h2{font-family:var(--serif);font-size:21px;font-weight:600;margin:0 0 4px}
+.info .when{color:var(--ink-3);font-size:12.5px;letter-spacing:.04em;margin:0 0 20px}
+dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:9px 16px;font-size:14px}
+dt{color:var(--ink-3);white-space:nowrap}
+dd{margin:0;word-break:break-word}
+.note{margin:22px 0 0;padding-top:18px;border-top:1px solid var(--line);
+  color:var(--ink-2);font-size:14px}
+.close{position:absolute;top:10px;right:12px;border:0;background:none;
+  color:var(--ink-3);font-size:26px;line-height:1;cursor:pointer;padding:6px 10px}
+.close:hover{color:var(--ink)}
+.sheet{position:relative}
+@media(max-width:720px){
+  .sheet{grid-template-columns:1fr}
+  .info{padding:22px 20px 24px}
+}
+
+footer{border-top:1px solid var(--line);padding:26px 0 54px;text-align:center;
+  color:var(--ink-3);font-size:12.5px}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>鉤織作品</h1>
+    <p id="count"></p>
+    <div class="rule"></div>
+  </header>
+
+  <div class="gallery" id="gallery"></div>
+</div>
+
+<dialog id="detail">
+  <div class="sheet">
+    <button class="close" id="close" aria-label="關閉">&times;</button>
+    <div class="shots" id="shots"></div>
+    <div class="info" id="info"></div>
+  </div>
+</dialog>
+
+<footer class="wrap">一針一針慢慢來</footer>
+
+<script src="works.js"></script>
+<script>
+var WORKS = (window.WORKS || []).slice();
+var gallery = document.getElementById("gallery");
+var dlg = document.getElementById("detail");
+
+function esc(s){
+  return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];
+  });
+}
+function photoList(w){
+  // 第一張一律是 <id>.jpg，其餘來自 photos 陣列
+  return ["photos/web/" + w.id + ".jpg"].concat(
+    (w.photos || []).map(function(f){ return "photos/web/" + f; }));
+}
+
+function render(){
+  document.getElementById("count").textContent =
+    WORKS.length ? WORKS.length + " 件作品" : "";
+
+  if (!WORKS.length){
+    gallery.style.columns = "none";
+    gallery.innerHTML =
+      '<div class="empty"><b>還沒有作品。</b><br>' +
+      '把照片放進 <code>photos/</code>（檔名用作品代號，例如 <code>bag.jpg</code>），' +
+      '跑一次 <code>scripts/prepare_photos.sh</code> 縮圖，' +
+      '再把資料寫進 <code>works.js</code> 就會出現在這裡。<br>' +
+      '不知道要填什麼可以跑 <code>python3 scripts/list_new.py</code>，' +
+      '它會列出缺資料的照片並印出可以直接貼的空白欄位。</div>';
+    return;
+  }
+
+  // 新的排前面
+  WORKS.sort(function(a, b){ return String(b.date||"").localeCompare(String(a.date||"")); });
+
+  gallery.innerHTML = WORKS.map(function(w, i){
+    return '<figure data-i="' + i + '" tabindex="0">' +
+      '<img src="' + esc(photoList(w)[0]) + '" alt="' + esc(w.title) + '" loading="lazy">' +
+      '<figcaption><p class="t">' + esc(w.title) + '</p>' +
+      '<p class="m">' + [esc(w.yarn), esc(w.date)].filter(Boolean).join(" · ") +
+      '</p></figcaption></figure>';
+  }).join("");
+}
+
+function open(i){
+  var w = WORKS[i];
+  document.getElementById("shots").innerHTML = photoList(w).map(function(src){
+    return '<img src="' + esc(src) + '" alt="' + esc(w.title) + '">';
+  }).join("");
+
+  var rows = [["用線", w.yarn], ["尺寸", w.size], ["鉤針", w.hook]]
+    .filter(function(r){ return r[1]; })
+    .map(function(r){ return "<dt>" + r[0] + "</dt><dd>" + esc(r[1]) + "</dd>"; })
+    .join("");
+
+  document.getElementById("info").innerHTML =
+    "<h2>" + esc(w.title) + "</h2>" +
+    '<p class="when">' + esc(w.date) + "</p>" +
+    (rows ? "<dl>" + rows + "</dl>" : "") +
+    (w.note ? '<p class="note">' + esc(w.note) + "</p>" : "");
+
+  dlg.showModal();
+}
+
+gallery.addEventListener("click", function(e){
+  var f = e.target.closest("figure");
+  if (f) open(+f.dataset.i);
+});
+gallery.addEventListener("keydown", function(e){
+  if (e.key !== "Enter" && e.key !== " ") return;
+  var f = e.target.closest("figure");
+  if (f){ e.preventDefault(); open(+f.dataset.i); }
+});
+document.getElementById("close").addEventListener("click", function(){ dlg.close(); });
+// 點大圖外面也關掉
+dlg.addEventListener("click", function(e){ if (e.target === dlg) dlg.close(); });
+
+render();
+</script>
+</html>
