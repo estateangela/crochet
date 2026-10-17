@@ -80,9 +80,18 @@ dialog{border:0;padding:0;background:transparent;max-width:min(1000px,95vw);
   width:100%;max-height:92vh}
 dialog::backdrop{background:rgba(23,20,18,.86);backdrop-filter:blur(3px)}
 .sheet{position:relative;background:var(--card);border-radius:5px;overflow:hidden;
-  display:grid;grid-template-columns:1.4fr 1fr;max-height:92vh}
-.shots{background:var(--paper);overflow-y:auto}
-.shots img{width:100%;height:auto;display:block}
+  display:grid;grid-template-columns:minmax(0,1.25fr) minmax(290px,.95fr);
+  max-height:92vh}
+/* 照片要整張看得完。手機拍的是 2268x4032 的直幅，若讓它 width:100% 撐滿欄寬，
+   高度會變成欄寬的 1.8 倍，只能捲動一段一段看。改成同時限制寬與高、
+   讓圖片自己決定尺寸，單張就會完整落在畫面裡。 */
+.shots{background:var(--paper);overflow-y:auto;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:10px;padding:10px}
+.shots img{display:block;max-width:100%;max-height:84vh;width:auto;height:auto;
+  border-radius:2px}
+/* 多張時每張各自佔滿一屏高度，往下捲就是下一張 */
+.shots.multi{justify-content:flex-start}
+.shots.multi img{max-height:78vh}
 .info{padding:34px 30px 30px;overflow-y:auto}
 .tagline{font-size:11px;letter-spacing:.2em;text-transform:uppercase;
   color:var(--accent);margin:0 0 9px;padding-left:.2em}
@@ -124,7 +133,9 @@ dd{margin:0;overflow-wrap:anywhere}
 .nav button:disabled{opacity:.35;cursor:default}
 @media(max-width:760px){
   .sheet{grid-template-columns:1fr;max-height:92vh;overflow-y:auto}
-  .shots{overflow:visible}
+  .shots{overflow:visible;padding:8px}
+  /* 單欄時圖片若佔滿整個視窗高度，下面的線材資訊就被推到看不見 */
+  .shots img,.shots.multi img{max-height:62vh}
   .info{padding:24px 20px 26px}
   .nav{position:static;justify-content:flex-end;margin-top:20px}
 }
@@ -257,7 +268,10 @@ function open(i){
   if (i < 0 || i >= shown.length) return;
   at = i;
   var w = shown[i];
-  $("shots").innerHTML = shots(w).map(function(src){
+  var srcs = shots(w);
+  var box = $("shots");
+  box.className = srcs.length > 1 ? "shots multi" : "shots";
+  box.innerHTML = srcs.map(function(src){
     return '<img src="' + esc(src) + '" alt="' + esc(w.title) + '">';
   }).join("");
 
