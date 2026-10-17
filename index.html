@@ -6,82 +6,142 @@
 <meta name="description" content="手作鉤織作品集">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@300;500;600&display=swap" rel="stylesheet">
 <style>
 :root{
-  --paper:#f7f4ef; --card:#fffdfa; --line:#e2dbd0; --line-2:#cfc5b6;
-  --ink:#2e2824; --ink-2:#6d6358; --ink-3:#938779;
-  --accent:#9d5b48;            /* 像紅陶、也像一捲棉線 */
+  --paper:#f6f2eb; --card:#fffdfa; --line:#e4ddd2; --line-2:#cdc2b1;
+  --ink:#2b2522; --ink-2:#6b6156; --ink-3:#978b7c;
+  --accent:#9d5b48; --accent-soft:#f0e3dd;
   --serif:"Noto Serif TC",ui-serif,Georgia,"Songti TC",serif;
   --sans:system-ui,-apple-system,"PingFang TC","Noto Sans TC",sans-serif;
+  --shadow:0 1px 2px rgba(43,37,34,.04),0 8px 24px -12px rgba(43,37,34,.14);
 }
 @media (prefers-color-scheme:dark){:root{
-  --paper:#1a1715; --card:#221e1b; --line:#332d28; --line-2:#463e37;
-  --ink:#ece5dc; --ink-2:#b3a79a; --ink-3:#8a7e72; --accent:#d08a72;
+  --paper:#171412; --card:#211d1a; --line:#312b26; --line-2:#473e36;
+  --ink:#ede6dd; --ink-2:#b5a99c; --ink-3:#8b7f72;
+  --accent:#d48b72; --accent-soft:#3a2721;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px -12px rgba(0,0,0,.6);
 }}
 *{box-sizing:border-box}
+html,body{overflow-x:hidden}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
   font-size:15px;line-height:1.7;-webkit-font-smoothing:antialiased}
-.wrap{max-width:1060px;margin:0 auto;padding:0 16px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+@media(max-width:480px){.wrap{padding:0 16px}}
 
-header{padding:72px 0 40px;text-align:center}
-h1{font-family:var(--serif);font-weight:600;font-size:clamp(28px,5vw,40px);
-  margin:0 0 10px;letter-spacing:.06em}
-header p{color:var(--ink-2);margin:0;font-size:14.5px}
-.rule{width:44px;height:1px;background:var(--line-2);margin:26px auto 0}
+/* ── 開場 ─────────────────────────────── */
+header{padding:84px 0 36px;text-align:center}
+.kicker{font-family:var(--serif);font-weight:300;letter-spacing:.42em;
+  text-transform:uppercase;font-size:11px;color:var(--ink-3);margin:0 0 18px;
+  padding-left:.42em}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(30px,5.5vw,46px);
+  margin:0;letter-spacing:.08em;text-wrap:balance}
+.lede{color:var(--ink-2);margin:16px auto 0;max-width:30em;font-size:15px}
+.stat{color:var(--ink-3);font-size:12.5px;letter-spacing:.1em;margin:24px 0 0}
 
-/* 作品牆：用 columns 做不等高排版，圖片比例不會被裁掉 */
-.gallery{columns:3 280px;column-gap:18px;padding-bottom:72px}
-figure{break-inside:avoid;margin:0 0 18px;background:var(--card);
-  border:1px solid var(--line);border-radius:3px;overflow:hidden;
-  cursor:zoom-in;transition:border-color .18s,transform .18s}
-figure:hover{border-color:var(--line-2);transform:translateY(-2px)}
-figure img{display:block;width:100%;height:auto}
-figcaption{padding:13px 15px 15px}
-.t{font-family:var(--serif);font-size:16px;font-weight:600;margin:0 0 3px}
-.m{color:var(--ink-3);font-size:12.5px;letter-spacing:.03em}
+/* ── 篩選 ─────────────────────────────── */
+.filters{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
+  padding:30px 0 34px}
+.chip{font:inherit;font-size:13px;color:var(--ink-2);background:none;
+  border:1px solid var(--line);border-radius:999px;padding:5px 15px;
+  cursor:pointer;transition:.16s;letter-spacing:.04em}
+.chip:hover{border-color:var(--line-2);color:var(--ink)}
+.chip[aria-pressed=true]{background:var(--accent-soft);border-color:transparent;
+  color:var(--accent);font-weight:500}
 
-.empty{border:1px dashed var(--line-2);border-radius:4px;padding:40px 28px;
-  color:var(--ink-2);line-height:1.9}
+/* ── 作品牆 ───────────────────────────── */
+.gallery{columns:3 290px;column-gap:22px;padding-bottom:88px}
+figure{break-inside:avoid;margin:0 0 22px;background:var(--card);
+  border:1px solid var(--line);border-radius:4px;overflow:hidden;
+  cursor:zoom-in;box-shadow:var(--shadow);
+  transition:transform .22s cubic-bezier(.2,.7,.3,1),border-color .22s}
+figure:hover,figure:focus-visible{transform:translateY(-3px);border-color:var(--line-2)}
+figure:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.shot{position:relative;overflow:hidden;background:var(--paper)}
+.shot img{display:block;width:100%;height:auto;
+  transition:transform .5s cubic-bezier(.2,.7,.3,1)}
+figure:hover .shot img{transform:scale(1.035)}
+.play{position:absolute;right:11px;bottom:11px;background:rgba(255,253,250,.92);
+  color:var(--accent);border-radius:999px;font-size:11px;letter-spacing:.06em;
+  padding:4px 11px;backdrop-filter:blur(6px)}
+figcaption{padding:15px 17px 17px}
+.t{font-family:var(--serif);font-size:16.5px;font-weight:600;margin:0 0 4px;
+  letter-spacing:.02em}
+.m{color:var(--ink-3);font-size:12.5px;letter-spacing:.04em;margin:0}
+
+.empty{border:1px dashed var(--line-2);border-radius:5px;padding:42px 30px;
+  color:var(--ink-2);line-height:1.95;margin-bottom:80px}
 .empty b{color:var(--ink);font-weight:600}
 .empty code{background:var(--card);border:1px solid var(--line);border-radius:3px;
-  padding:1px 6px;font-size:13px}
+  padding:1px 7px;font-size:13px;font-family:ui-monospace,Menlo,monospace}
 
-/* 點開的大圖 */
-dialog{border:0;padding:0;background:transparent;max-width:min(960px,94vw);width:100%}
-dialog::backdrop{background:rgba(26,23,21,.82)}
-.sheet{background:var(--card);border-radius:4px;overflow:hidden;
-  display:grid;grid-template-columns:1.45fr 1fr}
-.shots{background:var(--paper);display:flex;flex-direction:column}
+/* ── 作品細節 ─────────────────────────── */
+dialog{border:0;padding:0;background:transparent;max-width:min(1000px,95vw);
+  width:100%;max-height:92vh}
+dialog::backdrop{background:rgba(23,20,18,.86);backdrop-filter:blur(3px)}
+.sheet{position:relative;background:var(--card);border-radius:5px;overflow:hidden;
+  display:grid;grid-template-columns:1.4fr 1fr;max-height:92vh}
+.shots{background:var(--paper);overflow-y:auto}
 .shots img{width:100%;height:auto;display:block}
-.info{padding:30px 28px 28px;min-width:0}
-.info h2{font-family:var(--serif);font-size:21px;font-weight:600;margin:0 0 4px}
-.info .when{color:var(--ink-3);font-size:12.5px;letter-spacing:.04em;margin:0 0 20px}
-dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:9px 16px;font-size:14px}
+.info{padding:34px 30px 30px;overflow-y:auto}
+.tagline{font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--accent);margin:0 0 9px;padding-left:.2em}
+.info h2{font-family:var(--serif);font-size:23px;font-weight:600;margin:0 0 5px;
+  letter-spacing:.03em;text-wrap:balance}
+.when{color:var(--ink-3);font-size:12.5px;letter-spacing:.07em;margin:0 0 24px}
+dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:10px 18px;font-size:14px}
 dt{color:var(--ink-3);white-space:nowrap}
-dd{margin:0;word-break:break-word}
-.note{margin:22px 0 0;padding-top:18px;border-top:1px solid var(--line);
+dd{margin:0;overflow-wrap:anywhere}
+.note{margin:24px 0 0;padding-top:20px;border-top:1px solid var(--line);
   color:var(--ink-2);font-size:14px}
-.close{position:absolute;top:10px;right:12px;border:0;background:none;
-  color:var(--ink-3);font-size:26px;line-height:1;cursor:pointer;padding:6px 10px}
+.ref{margin:24px 0 0;padding-top:20px;border-top:1px solid var(--line)}
+.ref h3{font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 12px;font-weight:500}
+/* 點了才載入 YouTube —— 不要為了一個沒人點的縮圖去載整包播放器 */
+.facade{position:relative;display:block;border:0;padding:0;width:100%;
+  aspect-ratio:16/9;border-radius:4px;overflow:hidden;cursor:pointer;
+  background:#000 center/cover no-repeat}
+.facade::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.18);
+  transition:.2s}
+.facade:hover::after{background:rgba(0,0,0,.05)}
+.facade span{position:absolute;inset:0;margin:auto;width:56px;height:40px;
+  background:rgba(255,253,250,.94);border-radius:10px;z-index:1;
+  display:grid;place-items:center;color:var(--accent);font-size:15px}
+.facade iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.vlink{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;
+  color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;
+  transition:.16s}
+.vlink:hover{border-bottom-color:var(--accent)}
+.close{position:absolute;top:8px;right:10px;border:0;background:rgba(255,253,250,.86);
+  color:var(--ink-2);font-size:24px;line-height:1;cursor:pointer;
+  width:34px;height:34px;border-radius:999px;z-index:3;backdrop-filter:blur(6px)}
 .close:hover{color:var(--ink)}
-.sheet{position:relative}
-@media(max-width:720px){
-  .sheet{grid-template-columns:1fr}
-  .info{padding:22px 20px 24px}
+.nav{position:absolute;bottom:14px;right:14px;display:flex;gap:7px;z-index:3}
+.nav button{border:1px solid var(--line);background:rgba(255,253,250,.86);
+  color:var(--ink-2);width:34px;height:34px;border-radius:999px;cursor:pointer;
+  font-size:15px;backdrop-filter:blur(6px)}
+.nav button:hover:not(:disabled){color:var(--ink);border-color:var(--line-2)}
+.nav button:disabled{opacity:.35;cursor:default}
+@media(max-width:760px){
+  .sheet{grid-template-columns:1fr;max-height:92vh;overflow-y:auto}
+  .shots{overflow:visible}
+  .info{padding:24px 20px 26px}
+  .nav{position:static;justify-content:flex-end;margin-top:20px}
 }
 
-footer{border-top:1px solid var(--line);padding:26px 0 54px;text-align:center;
-  color:var(--ink-3);font-size:12.5px}
+footer{border-top:1px solid var(--line);padding:30px 0 60px;text-align:center;
+  color:var(--ink-3);font-size:12.5px;letter-spacing:.06em}
 </style>
 
 <div class="wrap">
   <header>
+    <p class="kicker">handmade</p>
     <h1>鉤織作品</h1>
-    <p id="count"></p>
-    <div class="rule"></div>
+    <p class="lede" id="lede"></p>
+    <p class="stat" id="stat"></p>
   </header>
 
+  <div class="filters" id="filters" hidden></div>
   <div class="gallery" id="gallery"></div>
 </div>
 
@@ -90,6 +150,10 @@ footer{border-top:1px solid var(--line);padding:26px 0 54px;text-align:center;
     <button class="close" id="close" aria-label="關閉">&times;</button>
     <div class="shots" id="shots"></div>
     <div class="info" id="info"></div>
+    <div class="nav">
+      <button id="prev" aria-label="上一件">&#8249;</button>
+      <button id="next" aria-label="下一件">&#8250;</button>
+    </div>
   </div>
 </dialog>
 
@@ -97,82 +161,185 @@ footer{border-top:1px solid var(--line);padding:26px 0 54px;text-align:center;
 
 <script src="works.js"></script>
 <script>
-var WORKS = (window.WORKS || []).slice();
-var gallery = document.getElementById("gallery");
-var dlg = document.getElementById("detail");
+var ALL = (window.WORKS || []).slice()
+  .sort(function(a, b){ return String(b.date||"").localeCompare(String(a.date||"")); });
+var shown = ALL.slice();
+var at = -1;
+
+var $ = function(id){ return document.getElementById(id); };
+var dlg = $("detail");
 
 function esc(s){
   return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){
     return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];
   });
 }
-function photoList(w){
-  // 第一張一律是 <id>.jpg，其餘來自 photos 陣列
-  return ["photos/web/" + w.id + ".jpg"].concat(
-    (w.photos || []).map(function(f){ return "photos/web/" + f; }));
+function shots(w){
+  return ["photos/web/" + w.id + ".jpg"]
+    .concat((w.photos || []).map(function(f){ return "photos/web/" + f; }));
+}
+// 從各種 YouTube 網址取出影片 id；取不到就當成一般連結處理
+function youtubeId(url){
+  var m = String(url || "").match(
+    /(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{11})/);
+  return m ? m[1] : null;
+}
+function years(){
+  var ds = ALL.map(function(w){ return String(w.date||"").slice(0,4); })
+              .filter(Boolean).sort();
+  if (!ds.length) return "";
+  return ds[0] === ds[ds.length-1] ? ds[0] : ds[0] + "–" + ds[ds.length-1];
 }
 
-function render(){
-  document.getElementById("count").textContent =
-    WORKS.length ? WORKS.length + " 件作品" : "";
+function renderHead(){
+  $("lede").textContent = ALL.length
+    ? "每件都記下用了什麼線、多少用量、幾號鉤針，有些附上當初參考的教學影片。"
+    : "";
+  var y = years();
+  $("stat").textContent = ALL.length
+    ? ALL.length + " 件" + (y ? " · " + y : "") : "";
+}
 
-  if (!WORKS.length){
-    gallery.style.columns = "none";
-    gallery.innerHTML =
+function renderFilters(){
+  var tags = [];
+  ALL.forEach(function(w){ if (w.tag && tags.indexOf(w.tag) < 0) tags.push(w.tag); });
+  if (tags.length < 2) return;              // 只有一種分類就不必篩選
+  var box = $("filters");
+  box.hidden = false;
+  box.innerHTML = ['<button class="chip" data-tag="" aria-pressed="true">全部</button>']
+    .concat(tags.map(function(t){
+      return '<button class="chip" data-tag="' + esc(t) + '" aria-pressed="false">'
+          + esc(t) + "</button>";
+    })).join("");
+}
+
+function renderGallery(){
+  var g = $("gallery");
+  if (!ALL.length){
+    g.style.columns = "none";
+    g.innerHTML =
       '<div class="empty"><b>還沒有作品。</b><br>' +
-      '把照片放進 <code>photos/</code>（檔名用作品代號，例如 <code>bag.jpg</code>），' +
-      '跑一次 <code>scripts/prepare_photos.sh</code> 縮圖，' +
-      '再把資料寫進 <code>works.js</code> 就會出現在這裡。<br>' +
-      '不知道要填什麼可以跑 <code>python3 scripts/list_new.py</code>，' +
-      '它會列出缺資料的照片並印出可以直接貼的空白欄位。</div>';
+      '把照片放進 <code>photos/</code>（檔名用作品代號，例如 <code>coaster.jpg</code>），' +
+      '跑一次 <code>./scripts/prepare_photos.sh</code> 縮圖，' +
+      '再執行 <code>python3 scripts/list_new.py</code>，' +
+      '它會印出可以直接貼進 <code>works.js</code> 的空白欄位。</div>';
     return;
   }
-
-  // 新的排前面
-  WORKS.sort(function(a, b){ return String(b.date||"").localeCompare(String(a.date||"")); });
-
-  gallery.innerHTML = WORKS.map(function(w, i){
-    return '<figure data-i="' + i + '" tabindex="0">' +
-      '<img src="' + esc(photoList(w)[0]) + '" alt="' + esc(w.title) + '" loading="lazy">' +
-      '<figcaption><p class="t">' + esc(w.title) + '</p>' +
-      '<p class="m">' + [esc(w.yarn), esc(w.date)].filter(Boolean).join(" · ") +
-      '</p></figcaption></figure>';
+  g.innerHTML = shown.map(function(w, i){
+    return '<figure data-i="' + i + '" tabindex="0" aria-label="' + esc(w.title) + '">' +
+      '<div class="shot"><img src="' + esc(shots(w)[0]) + '" alt="' + esc(w.title) +
+      '" loading="lazy">' +
+      (w.video ? '<span class="play">教學影片</span>' : "") +
+      '</div><figcaption><p class="t">' + esc(w.title) + '</p><p class="m">' +
+      [esc(w.yarn), esc(w.date)].filter(Boolean).join(" · ") +
+      "</p></figcaption></figure>";
   }).join("");
+}
+
+function reference(w){
+  if (!w.video && !w.source) return "";
+  var body = "";
+  var yt = youtubeId(w.video);
+  if (yt){
+    body = '<button class="facade" data-yt="' + yt + '" aria-label="播放教學影片" ' +
+      'style="background-image:url(https://i.ytimg.com/vi/' + yt + '/hqdefault.jpg)">' +
+      "<span>&#9654;</span></button>";
+  } else if (w.video){
+    body = '<a class="vlink" href="' + esc(w.video) + '" target="_blank" ' +
+      'rel="noopener">&#9654; 看教學影片</a>';
+  }
+  if (w.source) body += '<p class="m" style="margin-top:10px">圖解來源：' +
+    esc(w.source) + "</p>";
+  return '<div class="ref"><h3>參考</h3>' + body + "</div>";
 }
 
 function open(i){
-  var w = WORKS[i];
-  document.getElementById("shots").innerHTML = photoList(w).map(function(src){
+  if (i < 0 || i >= shown.length) return;
+  at = i;
+  var w = shown[i];
+  $("shots").innerHTML = shots(w).map(function(src){
     return '<img src="' + esc(src) + '" alt="' + esc(w.title) + '">';
   }).join("");
 
-  var rows = [["用線", w.yarn], ["尺寸", w.size], ["鉤針", w.hook]]
+  // 線材放最前面且自成一段：要照著做的人第一個問的就是「這用什麼線」
+  var yarnLine = w.yarn
+    ? (w.yarnUrl
+        ? '<a class="vlink" href="' + esc(w.yarnUrl) + '" target="_blank" rel="noopener">'
+          + esc(w.yarn) + "</a>"
+        : esc(w.yarn))
+    : "";
+  var rows = [["線材", yarnLine], ["材質", esc(w.fiber)], ["用量", esc(w.amount)],
+              ["尺寸", esc(w.size)], ["鉤針", esc(w.hook)]]
     .filter(function(r){ return r[1]; })
-    .map(function(r){ return "<dt>" + r[0] + "</dt><dd>" + esc(r[1]) + "</dd>"; })
-    .join("");
+    .map(function(r){ return "<dt>" + r[0] + "</dt><dd>" + r[1] + "</dd>"; }).join("");
 
-  document.getElementById("info").innerHTML =
+  $("info").innerHTML =
+    (w.tag ? '<p class="tagline">' + esc(w.tag) + "</p>" : "") +
     "<h2>" + esc(w.title) + "</h2>" +
     '<p class="when">' + esc(w.date) + "</p>" +
     (rows ? "<dl>" + rows + "</dl>" : "") +
-    (w.note ? '<p class="note">' + esc(w.note) + "</p>" : "");
+    (w.note ? '<p class="note">' + esc(w.note) + "</p>" : "") +
+    reference(w);
 
-  dlg.showModal();
+  $("prev").disabled = i === 0;
+  $("next").disabled = i === shown.length - 1;
+  $("shots").scrollTop = 0; $("info").scrollTop = 0;
+  if (!dlg.open) dlg.showModal();
+  history.replaceState(null, "", "#" + encodeURIComponent(w.id));
+}
+function close(){
+  dlg.close();
+  history.replaceState(null, "", location.pathname + location.search);
 }
 
-gallery.addEventListener("click", function(e){
+$("gallery").addEventListener("click", function(e){
   var f = e.target.closest("figure");
   if (f) open(+f.dataset.i);
 });
-gallery.addEventListener("keydown", function(e){
+$("gallery").addEventListener("keydown", function(e){
   if (e.key !== "Enter" && e.key !== " ") return;
   var f = e.target.closest("figure");
   if (f){ e.preventDefault(); open(+f.dataset.i); }
 });
-document.getElementById("close").addEventListener("click", function(){ dlg.close(); });
-// 點大圖外面也關掉
-dlg.addEventListener("click", function(e){ if (e.target === dlg) dlg.close(); });
+$("filters").addEventListener("click", function(e){
+  var c = e.target.closest(".chip");
+  if (!c) return;
+  [].forEach.call(this.querySelectorAll(".chip"), function(b){
+    b.setAttribute("aria-pressed", String(b === c));
+  });
+  var tag = c.dataset.tag;
+  shown = tag ? ALL.filter(function(w){ return w.tag === tag; }) : ALL.slice();
+  renderGallery();
+});
+$("close").addEventListener("click", close);
+$("prev").addEventListener("click", function(){ open(at - 1); });
+$("next").addEventListener("click", function(){ open(at + 1); });
+dlg.addEventListener("click", function(e){ if (e.target === dlg) close(); });
+dlg.addEventListener("cancel", function(){
+  history.replaceState(null, "", location.pathname + location.search);
+});
+dlg.addEventListener("click", function(e){
+  var f = e.target.closest(".facade");
+  if (!f || f.querySelector("iframe")) return;
+  var fr = document.createElement("iframe");
+  fr.src = "https://www.youtube-nocookie.com/embed/" + f.dataset.yt + "?autoplay=1";
+  fr.allow = "accelerometer; autoplay; encrypted-media; picture-in-picture";
+  fr.allowFullscreen = true;
+  f.appendChild(fr);
+});
+document.addEventListener("keydown", function(e){
+  if (!dlg.open) return;
+  if (e.key === "ArrowLeft") open(at - 1);
+  if (e.key === "ArrowRight") open(at + 1);
+});
 
-render();
+renderHead(); renderFilters(); renderGallery();
+
+// 用 #id 直接連到某一件作品
+var want = decodeURIComponent(location.hash.slice(1));
+if (want){
+  var idx = shown.findIndex(function(w){ return w.id === want; });
+  if (idx >= 0) open(idx);
+}
 </script>
 </html>
